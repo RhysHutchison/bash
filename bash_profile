@@ -1,6 +1,7 @@
 # include homebrew PHP, global composer into $PATH
 export PATH="$(brew --prefix homebrew/php/php70)/bin:/usr/local/bin:/usr/local/mysql/bin:~/.composer/vendor/bin:$PATH"
 export EDITOR="subl -w"
+
 # Programs Shortcuts
 # --------------------------------------------------------------------------
 alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
