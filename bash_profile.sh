@@ -209,6 +209,7 @@ alias docker.up.dir="gosvc && TARGET=svc-dir mk compose.up.build"
 alias docker.down.dir="gosvc && TARGET=svc-dir docker-compose down"
 alias docker.up.dir.aws="docker.aws.make && gosvc && TARGET=svc-dir mk aws.migrate.up"
 alias docker.down.dir.aws="gosvc && TARGET=svc-dir mk aws.migrate.down"
+alias docker.reset.dir.aws="docker.down.dir.aws && docker.up.dir.aws"
 # --------------------------------------------------
 
 # -----------------#
@@ -239,6 +240,7 @@ alias docker.down.award.aws="gosvc && TARGET=svc-award mk aws.migrate.down"
 # -------#
 # Devbox #
 # -------#
+alias docker.reset.devbox="devbox && make stop && make clean && rm -rf $HOME/dev/src/github.com/deputyapp/devbox/data/localstack"
 alias docker.aws.make="devbox && make aws"
 alias docker.up.devbox="devbox && docker-compose pull && make up"
 alias docker.down.devbox="devbox && docker-compose down"
