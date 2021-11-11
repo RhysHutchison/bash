@@ -48,7 +48,7 @@ PS1="$GREEN\u@machine$NO_COLOUR:\w$YELLOW\$(parse_git_branch)$NO_COLOUR\$ "
 # --------------------------------------------------
 # General Functions
 # --------------------------------------------------
-alias edit="open ~/.bash_profile"
+alias edit="open $HOME/dev/src/github.com/deputyapp/bash/bash_profile.sh"
 alias resetbluetooth="sudo rm -R /Library/Preferences/com.apple.Bluetooth.plist"
 alias restartbluetooth="blueutil --power 0 && sleep 10 && blueutil --power 1"
 
@@ -114,6 +114,7 @@ alias zipFTP="rm /Users/`whoami`/Desktop/deputy-sftp.zip; cd /Users/`whoami`/Sit
 alias zipMcdonaldsStore="cd /Users/`whoami`/dev/src/github.com/deputyapp/cx-customer-services/mcdonalds/lambda/cx-mcdonalds-store; rm cx-mcdonalds-store.zip; zip -r -X cx-mcdonalds-store.zip *"
 alias zipMcdonaldsInstance="cd /Users/`whoami`/dev/src/github.com/deputyapp/cx-customer-services/mcdonalds/lambda/cx-mcdonalds-instance; rm cx-mcdonalds-instance.zip; zip -r -X cx-mcdonalds-instance.zip *"
 alias zipEsteePayroll="cd /Users/`whoami`/dev/src/github.com/deputyapp/cx-customer-services/estee-lauder/lambda/cx-estee-lauder-automated-payroll; rm cx-estee-lauder-automated-payroll.zip; zip -r -X cx-estee-lauder-automated-payroll.zip *"
+alias zipSquareSandboxSeeder="rm $HOME/Desktop/square-sandbox-seeder.zip; cd $HOME/dev/src/github.com/deputyapp/square-sandbox-sales-generator/; zip -r $HOME/Desktop/square-sandbox-seeder.zip *"
 alias uploadMcdonaldsStore="cd /Users/`whoami`/dev/src/github.com/deputyapp/cx-customer-services/mcdonalds/lambda/cx-mcdonalds-store && aws lambda update-function-code --function-name cx-mcdonalds-store --zip-file fileb://cx-mcdonalds-store.zip"
 alias uploadMcdonaldsInstance="cd /Users/`whoami`/dev/src/github.com/deputyapp/cx-customer-services/mcdonalds/lambda/cx-mcdonalds-instance && aws lambda update-function-code --function-name cx-mcdonalds-instance --zip-file fileb://cx-mcdonalds-instance.zip"
 alias uploadEsteePayroll="cd /Users/`whoami`/dev/src/github.com/deputyapp/cx-customer-services/estee-lauder/lambda/cx-estee-lauder-automated-payroll && aws lambda update-function-code --function-name cx-estee-lauder-automated-payroll --zip-file fileb://cx-estee-lauder-automated-payroll.zip"
