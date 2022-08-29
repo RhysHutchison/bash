@@ -48,7 +48,7 @@ PS1="$GREEN\u@machine$NO_COLOUR:\w$YELLOW\$(parse_git_branch)$NO_COLOUR\$ "
 # --------------------------------------------------
 # General Functions
 # --------------------------------------------------
-alias edit="open $HOME/dev/src/github.com/deputyapp/bash/bash_profile.sh"
+alias edit="open $HOME/.bash_profile"
 alias resetbluetooth="sudo rm -R /Library/Preferences/com.apple.Bluetooth.plist"
 alias restartbluetooth="blueutil --power 0 && sleep 10 && blueutil --power 1"
 
@@ -73,7 +73,7 @@ alias hosts="open /etc/hosts"
 alias localdns="networksetup -setdnsservers Wi-Fi 127.0.0.1 192.168.50.1"
 alias defaultdns="networksetup -setdnsservers Wi-Fi 192.168.50.1"
 alias prodtestdns="networksetup -setdnsservers Wi-Fi 192.168.50.1 && networksetup -setdnsservers 'Deputy VPN' 1.2.3.4"
-alias checkdns="cat /etc/resolv.conf | grep -o \"[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\""
+alias checkdns="cat /etc/resolv.conf | grep -o \"[0-aws sts get-caller-identity --region=us-west-29]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\""
 
 # --------------------------------------------------
 # Bash Commands
@@ -87,17 +87,19 @@ alias gf="git flow"
 alias gp="git push --all && git push --tags"
 alias gs="git status"
 alias gb="git branch"
+alias git.revert.last="git reset --soft HEAD~1"
 alias updatefeaturebranch="git checkout develop && git pull --all && git checkout - && git merge develop"
 alias commit="git commit -am"
 alias commitm="git commit -m"
 alias gau="git add $(git ls-files -o —exclude-standard)"
 alias nah="git reset --hard;git clean -df;"
-alias git.pull="devbox && pwd && git checkout main && git pull --all && webapp && pwd && git checkout main && git pull --all && servicesproxy && pwd && git checkout main && git pull --all && gosvc && pwd && git checkout main && git pull --all && webapplicationdirectory && pwd && git checkout main && git pull --all"
+alias git.pull="devbox && pwd && git checkout main && git pull --all && webapp && pwd && git checkout main && git pull --all && servicesproxy && pwd && git checkout main && git pull --all && gosvc && pwd && git checkout main && git pull --all && webapplicationdirectory && pwd && git checkout main && git pull --all && payroll && pwd && checkout main && git pull --all"
 alias pushupstream="git push --set-upstream origin"
+#$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \1/')
 # --------------------------------------------------
 
-alias compileserviceproxy="sh $HOME/dev/src/github.com/deputyapp/services-proxy/dispatch/includes/decaf/build.sh deputec_dispatch_helper \"Deputy Integrations Helper Script\" 1 business.dev.local.dpty.io 849799dafb9744b099ba66be96ce7db4"
-#alias compileserviceproxy="sh $HOME/dev/src/github.com/deputyapp/services-proxy/dispatch/includes/decaf/build.sh pbcopy"
+#alias compileserviceproxy="sh $HOME/dev/src/github.com/deputyapp/services-proxy/dispatch/includes/decaf/build.sh deputec_dispatch_helper \"Deputy Integrations Helper Script\" 1 business.dev.local.dpty.io 849799dafb9744b099ba66be96ce7db4"
+alias compileserviceproxy="sh $HOME/dev/src/github.com/deputyapp/services-proxy/dispatch/includes/decaf/build.sh pbcopy"
 alias compileportal="php -q $HOME/dev/src/github.com/deputyapp/portal/convert.php decaf dexml.coffee > dexml.xml;"
 alias updateportal="php update.php"
 alias s3="cd ~/Library/Group\ Containers/G69SCX94XU.duck/Library/Application\ Support/duck/Volumes/AWS-S3"
@@ -165,27 +167,38 @@ function askYesNo {
 # --------------------------------------------------
 # Docker CLI Commands
 # --------------------------------------------------
+alias docker.restart="pkill -f docker && open /Applications/Docker.app"
 alias docker.stop="docker stop \$(docker ps --format '{{.Names}}' -a -q)"
 alias docker.network="docker network create deputy"
+alias docker.pull="webapp && make pull"
+alias docker.info="docker system df"
+alias docker.nuke="docker system prune -a -f --volumes"
+alias docker.info.containers="docker ps --format '{{.ID}} {{.Names}}'"
+alias docker.prune.images="docker image prune --filter 'until=24h'"
+alias docker.prune.volumes="docker system prune -a --volumes"
+alias docker.prune.containers="docker container prune"
 
-alias docker.containers="docker ps --format '{{.ID}} {{.Names}}'"
-alias docker.containers.prune="docker container prune"
-alias docker.images.prune="docker image prune"
-alias docker.prune="devbox && docker.containers.prune && docker image prune --filter 'until=24h'"
-
-alias docker.down="docker.down.devbox && docker.down.webapp && docker.down.servicesproxy && docker.down.marketplace && docker.down.integrations && docker.down.web-application-directory"
+alias docker.down="docker.down.devbox && docker.down.webapp && docker.down.servicesproxy && docker.down.marketplace && docker.down.integrations && docker.down.web-application-directory && docker.down.backstage && docker.down.dir"
 # --------------------------------------------------
 
 # --------#
 # GO-SVC  #
 # --------#
+alias docker.down.svc="gosvc && docker.down.integrations && docker.down.dir && docker.down.backstage && docker.down.marketplace"
 alias docker.jwt.dir="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_DIR_V1 --payload_user_id ef172da5-a546-43d8-8eb4-580a821039e9 --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf -d 24h"
 # --------------------------------------------------
+
+# ----------------------#
+# GO-SVC Testing Suite  #
+# ----------------------#
+alias docker.test.integrations="gosvc && mk test.target TARGET=svc-integrations"
+alias docker.test.integrations.e2e="gosvc && mk e2e-tests TARGET=svc-integrations"
 
 # --------------------#
 # GO-SVC Integrations #
 # --------------------#
 alias docker.up.integrations="gosvc && TARGET=svc-integrations APP_BACKGROUND_WORKER_ENABLED=1 AUTH_ENABLED=true mk compose.up.build"
+alias docker.up.integrations.debug="gosvc && TARGET=svc-integrations APP_BACKGROUND_WORKER_ENABLED=1 APP_REST_DEBUG=true AUTH_ENABLED=true mk compose.up.build"
 alias docker.down.integrations="gosvc && TARGET=svc-integrations docker-compose down"
 alias docker.up.integrations.aws="docker.aws.make && gosvc && TARGET=svc-integrations mk aws.migrate.up"
 alias docker.down.integrations.aws="gosvc && TARGET=svc-integrations mk aws.migrate.down"
@@ -209,6 +222,8 @@ alias docker.reset.marketplace.aws="docker.down.marketplace.aws && docker.up.mar
 alias docker.up.dir="gosvc && TARGET=svc-dir mk compose.up.build"
 alias docker.down.dir="gosvc && TARGET=svc-dir docker-compose down"
 alias docker.up.dir.aws="docker.aws.make && gosvc && TARGET=svc-dir mk aws.migrate.up"
+alias docker.up.dir.tenant="curl --location --request POST 'http://api.local.dpty.io/sys/dir/v1/tenants' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhcGkuZGVwdXR5LmNvbS9zeXMvZGlyL3YxIiwiZHAuYmlkIjoiZWI2NmE1MzktMmFiYS00OTM1LWEyNTAtNzUzZmU1ZTllNmJmIiwiZHAudWlkIjoiZWYxNzJkYTUtYTU0Ni00M2Q4LThlYjQtNTgwYTgyMTAzOWU5IiwiZXhwIjoxNjMxMjI4Mzc5LCJpYXQiOjE2MzExNDE5NzksImlzcyI6ImRlcHV0eS5jb20iLCJqdGkiOiIxeHNSbnNPRTRPTW5RSFREN0FpUHJDV3RLVDUiLCJuYmYiOjE2MzExNDE5NzksInN1YiI6ImRlcHV0eS5jb20ifQ.ordh9SPuLy2_h7ggw8ujBUZHldrWEusah4lxcTnFLdQ' --header 'Content-Type: application/json' --data-raw '{\"data\": {    \"id\":\"eb66a539-2aba-4935-a250-753fe5e9e6bf\",\"hostname\":\"business.dev.local.dpty.io\",\"countryId\":13,\"countryCode\":\"AU\",\"dbHost\":\"testdb.deputec.com\",\"dbName\":\"deputec_b1234\",\"additionalHostname\":\"business.dev.local.dpty.io\",\"createdAt\":\"2019-11-28T03:57:20Z\",\"redisTenantCluster\":\"redis-tenant.local.deputec.com:17000\",\"creator\":\"rimba\",\"channel\":\"DIRECT\",\"region\":\"apse2\",\"portfolioName\":\"ladida\",\"edition\":9}}'"
+
 alias docker.down.dir.aws="gosvc && TARGET=svc-dir mk aws.migrate.down"
 alias docker.reset.dir.aws="docker.down.dir.aws && docker.up.dir.aws"
 # --------------------------------------------------
@@ -230,13 +245,27 @@ alias docker.up.hello="gosvc && TARGET=svc-hello APP_BACKGROUND_WORKER_ENABLED=1
 alias docker.down.hello="gosvc && docker stop svc-hello_app_1"
 # --------------------------------------------------
 
+# -------------#
+# GO-SVC Leave #
+# -------------#
+alias docker.up.leave="gosvc && TARGET=svc-leave mk compose.up.build"
+alias docker.up.leave.aws="docker.aws.make && gosvc && TARGET=svc-leave mk aws.migrate.up"
+
 # --------------#
 # GO-SVC Awards #
 # --------------#
-alias docker.up.award="gosvc && TARGET=svc-award mk compose.up.build"
+alias docker.reset.award.aws="gosvc && docker.down.award.aws && docker.up.award.aws"
+alias docker.up.award="gosvc && TARGET=svc-award AUTH_ENABLED=true mk compose.up.build"
 alias docker.up.award.aws="docker.aws.make && gosvc && TARGET=svc-award mk aws.migrate.up"
 alias docker.down.award.aws="gosvc && TARGET=svc-award mk aws.migrate.down"
 # --------------------------------------------------
+
+# ------------------#
+# AWS Migrate Calls #
+# ------------------#
+alias docker.reset.aws="gosvc && docker.reset.dir.aws && docker.reset.integrations.aws && docker.reset.marketplace.aws && docker.reset.backstage.aws"
+alias docker.up.aws="gosvc && docker.up.dir.aws && docker.up.integrations.aws && docker.up.marketplace.aws && docker.up.backstage.aws && docker.up.dir.tenant"
+alias docker.down.aws="gosvc && docker.down.dir.aws && docker.down.integrations.aws && docker.down.marketplace.aws && docker.down.backstage.aws"
 
 # -------#
 # Devbox #
@@ -251,11 +280,15 @@ alias docker.down.datadog="devbox && make datadog.down && cd -"
 # -------#
 # Webapp #
 # -------#
+alias docker.update.vault="webapp && make vault.pull"
+alias docker.reset.nodemodules="sudo rm -rf frontend/vue/node_modules frontend/classic/node_modules frontend/vnext/node_modules node_modules"
 alias docker.up.webapp="docker-compose build --pull --no-cache && docker-compose -f docker-compose.yml -f docker-compose.integrations.yml up"
 alias docker.down.webapp="webapp && docker-compose down"
-alias docker.update.webapp="webapp && make install"
+alias docker.update.webapp.backend="webapp && make install.backend"
+alias docker.update.webapp.frontend="webapp && make install.frontend"
 alias docker.bash.seed="webapp && make seed"
 alias docker.bash.seed.trial="webapp && make seed.trial"
+alias docker.bash.seed.enterprise="webapp && make seed.enterprise"
 alias docker.bash.test="webapp && docker-compose -f docker-compose.yml exec deputy bin/composer.phar test:database"
 alias docker.bash.webapp="webapp && docker-compose -f docker-compose.yml exec deputy bash"
 # --------------------------------------------------
@@ -263,7 +296,7 @@ alias docker.bash.webapp="webapp && docker-compose -f docker-compose.yml exec de
 # ---------------#
 # Services-Proxy #
 # ---------------#
-alias docker.up.servicesproxy="servicesproxy && make upbdi"
+alias docker.up.servicesproxy="servicesproxy && docker-compose -f docker-compose.yml -f docker-compose.integrations.yml up --build"
 alias docker.down.servicesproxy="servicesproxy && docker-compose down"
 alias docker.update.servicesproxy="docker exec services-proxy_service_proxy_1 php composer.phar install"
 # --------------------------------------------------
@@ -278,8 +311,8 @@ alias docker.down.websignup="websignup && docker-compose down"
 # --------------------------#
 # Web Application Directory #
 # --------------------------#
-alias docker.up.webapplicationdirectory="webapplicationdirectory && docker-compose up -d"
-alias docker.down.web-application-directory="webapplicationdirectory && docker-compose down"
+alias docker.up.applicationdirectory="webapplicationdirectory && docker-compose up -d"
+alias docker.down.applicationdirectory="webapplicationdirectory && docker-compose down"
 # --------------------------------------------------
 
 # -----------------#
@@ -291,9 +324,8 @@ alias docker.up.testapp="svcscripts && INSTANCE=\"https://business.dev.local.dpt
 # ---------#
 # OKTA 2FA #
 # ---------#
-alias docker.login.sso="opsinfra && okta-aws-cli-assume-role.sh"
-alias docker.login.account="echo 358559522285"
-alias docker.login="echo $(aws ecr get-login-password --profile dpty --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com)"
+alias docker.sso='AWS_PROFILE=okta-sso aws sso login'
+alias docker.login="AWS_PROFILE=okta-cx-rw aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
 # --------------------------------------------------
 
 # ---------------#
@@ -309,11 +341,9 @@ alias docker.aws.listtables="aws dynamodb list-tables --debug  --endpoint-url ht
 
 
 eval "$(direnv hook bash)"
-export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH="/usr/local/opt/php@7.4/bin:$PATH"
-export PATH="/usr/local/opt/php@7.4/sbin:$PATH"
-export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+export PATH="/usr/local/opt/php@7.4/bin:/usr/local/opt/php@7.4/sbin:/usr/local/opt/mysql@5.7/bin:/usr/local/sbin:$PATH"
+export PATH="$(brew --prefix php)/bin:$PATH"
