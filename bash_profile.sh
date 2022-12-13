@@ -21,11 +21,11 @@ alias payroll="cd $HOME/dev/src/github.com/deputyapp/deputy-payroll-export-scrip
 alias portal="cd $HOME/dev/src/github.com/deputyapp/portal"
 alias devbox="cd $HOME/dev/src/github.com/deputyapp/devbox"
 alias webapp="cd $HOME/dev/src/github.com/deputyapp/deputy-webapp"
-alias webapplicationdirectory="cd $HOME/dev/src/github.com/deputyapp/web-application-directory"
 alias websignup="cd $HOME/dev/src/github.com/deputyapp/web-signup"
 alias gosvc="cd $HOME/dev/src/github.com/deputyapp/go-svc"
 alias svcscripts="cd $HOME/dev/src/github.com/deputyapp/go-svc/cmd/svc-integrations/scripts"
 alias opsinfra="cd $HOME/dev/src/github.com/deputyapp/ops-infrastructure/bin"
+alias e2etests="cd $HOME/dev/src/github.com/deputyapp/test-e2e"
 
 # --------------------------------------------------
 # Custom CLI Functions (Show Current Git Branch)
@@ -65,6 +65,10 @@ alias mergetool="/Applications/DiffMerge.app/Contents/MacOS/DiffMerge"
 # --------------------------------------------------
 alias selenium="cd ~/Selenium && java -jar selenium-server-standalone-2.53.1.jar"
 alias phpunit="vendor/bin/phpunit"
+alias runtests="e2etests && make test PROJECT=csvBulk"
+alias docker.run.e2e.tests="e2etests && make test PROJECT=csvBulk"
+alias docker.run.e2e.debug="e2etests && make debug PROJECT=csvBulk"
+alias docker.run.e2e.report="npx playwright show-report"
 
 # --------------------------------------------------
 # Networking
@@ -87,6 +91,7 @@ alias gf="git flow"
 alias gp="git push --all && git push --tags"
 alias gs="git status"
 alias gb="git branch"
+alias git.branch.clean="git branch -vv | grep ': gone]'|  grep -v "\*" | awk '{ print $1; }' | xargs -r git branch -d"
 alias git.revert.last="git reset --soft HEAD~1"
 alias updatefeaturebranch="git checkout develop && git pull --all && git checkout - && git merge develop"
 alias commit="git commit -am"
@@ -164,6 +169,21 @@ function askYesNo {
     fi
 }
 
+#"git log --oneline --merges --first-parent 25b5113573bd26c8e40a38d827b8409a412de8c5..ec4bbe77cbcdaa813377f14e1a1698bc1f66f7bc --pretty='format:%h %d %s (%an)' | grep -i 'ints-'"
+alias git.extract="get_sha_extracts"
+
+function get_sha_extracts() {
+	DEFAULT="ints-"
+
+	read -p "Enter your key to extract [$DEFAULT]:" -r KEY
+	KEY=${KEY:-${DEFAULT}}
+	read -p "What's the previous SHA? " -r SHA1
+	read -p "What's the latest SHA? " -r SHA2
+
+	# OUTPUT="git log --oneline --merges --first-parent ${SHA1}..${SHA2} --pretty='format:%h %d %s (%an)' | grep -i '${KEY}'"
+	git log --oneline --merges --first-parent ${SHA1}..${SHA2} --pretty="format:%h %d %s (%an)" | grep -i "${KEY}"
+}
+
 # --------------------------------------------------
 # Docker CLI Commands
 # --------------------------------------------------
@@ -178,7 +198,7 @@ alias docker.prune.images="docker image prune --filter 'until=24h'"
 alias docker.prune.volumes="docker system prune -a --volumes"
 alias docker.prune.containers="docker container prune"
 
-alias docker.down="docker.down.devbox && docker.down.webapp && docker.down.servicesproxy && docker.down.marketplace && docker.down.integrations && docker.down.web-application-directory && docker.down.backstage && docker.down.dir"
+alias docker.down="docker.down.devbox && docker.down.webapp && docker.down.servicesproxy && docker.down.marketplace && docker.down.integrations && docker.down.backstage && docker.down.dir"
 # --------------------------------------------------
 
 # --------#
@@ -221,12 +241,21 @@ alias docker.reset.marketplace.aws="docker.down.marketplace.aws && docker.up.mar
 # -----------------#
 alias docker.up.dir="gosvc && TARGET=svc-dir mk compose.up.build"
 alias docker.down.dir="gosvc && TARGET=svc-dir docker-compose down"
-alias docker.up.dir.aws="docker.aws.make && gosvc && TARGET=svc-dir mk aws.migrate.up"
 alias docker.up.dir.tenant="curl --location --request POST 'http://api.local.dpty.io/sys/dir/v1/tenants' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhcGkuZGVwdXR5LmNvbS9zeXMvZGlyL3YxIiwiZHAuYmlkIjoiZWI2NmE1MzktMmFiYS00OTM1LWEyNTAtNzUzZmU1ZTllNmJmIiwiZHAudWlkIjoiZWYxNzJkYTUtYTU0Ni00M2Q4LThlYjQtNTgwYTgyMTAzOWU5IiwiZXhwIjoxNjMxMjI4Mzc5LCJpYXQiOjE2MzExNDE5NzksImlzcyI6ImRlcHV0eS5jb20iLCJqdGkiOiIxeHNSbnNPRTRPTW5RSFREN0FpUHJDV3RLVDUiLCJuYmYiOjE2MzExNDE5NzksInN1YiI6ImRlcHV0eS5jb20ifQ.ordh9SPuLy2_h7ggw8ujBUZHldrWEusah4lxcTnFLdQ' --header 'Content-Type: application/json' --data-raw '{\"data\": {    \"id\":\"eb66a539-2aba-4935-a250-753fe5e9e6bf\",\"hostname\":\"business.dev.local.dpty.io\",\"countryId\":13,\"countryCode\":\"AU\",\"dbHost\":\"testdb.deputec.com\",\"dbName\":\"deputec_b1234\",\"additionalHostname\":\"business.dev.local.dpty.io\",\"createdAt\":\"2019-11-28T03:57:20Z\",\"redisTenantCluster\":\"redis-tenant.local.deputec.com:17000\",\"creator\":\"rimba\",\"channel\":\"DIRECT\",\"region\":\"apse2\",\"portfolioName\":\"ladida\",\"edition\":9}}'"
 
+alias docker.up.dir.aws="docker.aws.make && gosvc && TARGET=svc-dir mk aws.migrate.up"
 alias docker.down.dir.aws="gosvc && TARGET=svc-dir mk aws.migrate.down"
 alias docker.reset.dir.aws="docker.down.dir.aws && docker.up.dir.aws"
 # --------------------------------------------------
+
+# -----------------#
+# GO-SVC URL #
+# -----------------#
+alias docker.up.url="gosvc && TARGET=svc-url AUTH_ENABLED=1 mk compose.up.build"
+alias docker.down.url="gosvc && docker stop svc-url_app_1"
+alias docker.up.url.aws="gosvc && TARGET=svc-url mk mysql.migrate"
+alias docker.down.url.aws="gosvc && TARGET=svc-url mk aws.migrate.down"
+alias docker.reset.url.aws="docker.down.url.aws && docker.up.url.aws"
 
 # -----------------#
 # GO-SVC Backstage #
@@ -237,6 +266,12 @@ alias docker.up.backstage.aws="gosvc && TARGET=svc-backstage mk aws.migrate.up"
 alias docker.down.backstage.aws="gosvc && TARGET=svc-backstage mk aws.migrate.down"
 alias docker.reset.backstage.aws="docker.down.backstage.aws && docker.up.backstage.aws"
 # --------------------------------------------------
+
+# -------------#
+# GO-SVC Query #
+# -------------#
+alias docker.up.query="gosvc && TARGET=svc-query APP_DEV_CONFIG_CLASSIC_MODE=false SECRETS_MYSQL_USERNAME=root SECRETS_MYSQL_PASSWORD=magic mk compose.up.build"
+alias docker.up.query.ngrok="ngrok http 8888"
 
 # -------------#
 # GO-SVC Hello #
@@ -256,7 +291,9 @@ alias docker.up.leave.aws="docker.aws.make && gosvc && TARGET=svc-leave mk aws.m
 # --------------#
 alias docker.reset.award.aws="gosvc && docker.down.award.aws && docker.up.award.aws"
 alias docker.up.award="gosvc && TARGET=svc-award AUTH_ENABLED=true mk compose.up.build"
+alias docker.up.award.jwt="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --aud SVC_AWARD_V1 --sub DEPUTY --duration 24h"
 alias docker.up.award.aws="docker.aws.make && gosvc && TARGET=svc-award mk aws.migrate.up"
+alias docker.down.award="gosvc && TARGET=svc-award docker-compose down"
 alias docker.down.award.aws="gosvc && TARGET=svc-award mk aws.migrate.down"
 # --------------------------------------------------
 
@@ -325,7 +362,8 @@ alias docker.up.testapp="svcscripts && INSTANCE=\"https://business.dev.local.dpt
 # OKTA 2FA #
 # ---------#
 alias docker.sso='AWS_PROFILE=okta-sso aws sso login'
-alias docker.login="AWS_PROFILE=okta-cx-rw aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
+alias docker.login="AWS_PROFILE=okta-mgt-basic aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
+alias docker.login.cx="AWS_PROFILE=okta-cx-rw aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
 # --------------------------------------------------
 
 # ---------------#
