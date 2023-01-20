@@ -61,14 +61,15 @@ alias mergetool="/Applications/DiffMerge.app/Contents/MacOS/DiffMerge"
 
 
 # --------------------------------------------------
-# Testing Suits
+# Testing Suites
 # --------------------------------------------------
 alias selenium="cd ~/Selenium && java -jar selenium-server-standalone-2.53.1.jar"
 alias phpunit="vendor/bin/phpunit"
-alias runtests="e2etests && make test PROJECT=csvBulk"
-alias docker.run.e2e.tests="e2etests && make test PROJECT=csvBulk"
-alias docker.run.e2e.debug="e2etests && make debug PROJECT=csvBulk"
-alias docker.run.e2e.report="npx playwright show-report"
+alias docker.test.e2e="e2etests && make test PROJECT=csvBulk"
+alias docker.test.e2e.debug="e2etests && make debug PROJECT=csvBulk"
+alias docker.test.e2e.report="npx playwright show-report"
+alias docker.test.integrations="gosvc && mk test.target TARGET=svc-integrations"
+alias docker.test.integrations.e2e="gosvc && mk e2e-tests TARGET=svc-integrations"
 
 # --------------------------------------------------
 # Networking
@@ -91,7 +92,7 @@ alias gf="git flow"
 alias gp="git push --all && git push --tags"
 alias gs="git status"
 alias gb="git branch"
-alias git.branch.clean="git branch -vv | grep ': gone]'|  grep -v "\*" | awk '{ print $1; }' | xargs -r git branch -d"
+alias git.branch.clean="git branch -vv | grep ': gone]'| grep -v "\*" | awk '{ print $1; }' | xargs -r git branch -d"
 alias git.revert.last="git reset --soft HEAD~1"
 alias updatefeaturebranch="git checkout develop && git pull --all && git checkout - && git merge develop"
 alias commit="git commit -am"
@@ -207,12 +208,6 @@ alias docker.down="docker.down.devbox && docker.down.webapp && docker.down.servi
 alias docker.down.svc="gosvc && docker.down.integrations && docker.down.dir && docker.down.backstage && docker.down.marketplace"
 alias docker.jwt.dir="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_DIR_V1 --payload_user_id ef172da5-a546-43d8-8eb4-580a821039e9 --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf -d 24h"
 # --------------------------------------------------
-
-# ----------------------#
-# GO-SVC Testing Suite  #
-# ----------------------#
-alias docker.test.integrations="gosvc && mk test.target TARGET=svc-integrations"
-alias docker.test.integrations.e2e="gosvc && mk e2e-tests TARGET=svc-integrations"
 
 # --------------------#
 # GO-SVC Integrations #
