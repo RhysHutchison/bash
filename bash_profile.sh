@@ -74,9 +74,11 @@ alias docker.test.e2e.premium.debug="e2etests && make debug PROJECT=csvBulk"
 alias docker.test.e2e.enterprise="e2etests && nvm use v14.21.2 && make test PROJECT=csvBulkEnterprise"
 alias docker.test.e2e.enterprise.debug="e2etests && nvm use v14.21.2 && make debug PROJECT=csvBulkEnterprise"
 alias docker.test.e2e.report="npx playwright show-report"
+alias docker.test.award="gosvc && TARGET=svc-award mk test.target"
+alias docker.test.dmm="gosvc && TARGET=svc-dmm mk test.target"
 alias docker.test.integrations="gosvc && mk test.target TARGET=svc-integrations"
 alias docker.test.integrations.e2e="gosvc && mk e2e-tests TARGET=svc-integrations"
-
+alias docker.test.award="gosvc && TARGET=svc-award mk test.target"
 # --------------------------------------------------
 # Networking
 # --------------------------------------------------
@@ -194,6 +196,7 @@ alias docker.jwt.metrics="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub 
 alias docker.jwt.payrate="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_PAYRATE_V1 -d 24h"
 alias docker.jwt.award="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --aud SVC_AWARD_V1 --sub DEPUTY --duration 24h"
 alias docker.jwt.webapp="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --aud DEPUTY --sub ONCE --duration 24h"
+alias docker.jwt.payroll="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --aud SVC_PAYROLL_V1 --payload_business_user_id '8973d035-ac37-4254-9596-7f797a884754' --payload_business_id 'c32085d7-3f17-4aa3-bd8d-f3e2b8660bc7' --payload_business_location_id '1' --duration 24h"
 alias docker.jwt.test="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_QUERY_V1 --oidc --svc-connect-endpoint https://api.usw2.test.dpty.io --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf --payload_business_user_id ef172da5-a546-43d8-8eb4-580a821039e9 -d 10072h"
 # --------------------------------------------------
 
@@ -202,16 +205,30 @@ alias docker.jwt.test="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY 
 # -------------#
 alias docker.up.audit="gosvc && TARGET=svc-audit mk compose.up.build"
 alias docker.up.audit.aws="docker.aws.make && gosvc && TARGET=svc-audit mk aws.migrate.up"
+alias docker.up.audit.aws.testing="docker.aws.make && gosvc && TARGET=svc-audit mk aws.migrate.up ENVIRONMENT=testing"
 # --------------------------------------------------
 
 # --------------#
 # GO-SVC AWARDS #
 # --------------#
 alias docker.reset.award.aws="gosvc && docker.down.award.aws && docker.up.award.aws"
-alias docker.up.award="gosvc && TARGET=svc-award AUTH_ENABLED=true mk compose.up.build"
+alias docker.up.award="gosvc && TARGET=svc-award mk compose.up.build"
+alias docker.up.award.detached="gosvc && TARGET=svc-award mk compose.up.build-detached"
+alias docker.up.award.auth="gosvc && TARGET=svc-award AUTH_ENABLED=true mk compose.up.build"
+alias docker.up.award.auth.detached="gosvc && TARGET=svc-award AUTH_ENABLED=true mk compose.up.build-detached"
 alias docker.up.award.aws="docker.aws.make && gosvc && TARGET=svc-award mk aws.migrate.up"
+alias docker.up.award.aws.testing="docker.aws.make && gosvc && TARGET=svc-award mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.down.award="gosvc && TARGET=svc-award docker-compose down"
 alias docker.down.award.aws="gosvc && TARGET=svc-award mk aws.migrate.down"
+alias docker.down.award.aws.testing="gosvc && TARGET=svc-award mk aws.migrate.down ENVIRONMENT=testing"
+# --------------------------------------------------
+
+# ------------------#
+# GO-SVC BACKSTAGE  #
+# ------------------#
+alias docker.reset.backstage.aws="gosvc && docker.down.backstage.aws && docker.up.backstage.aws"
+alias docker.up.backstage.aws="gosvc && TARGET=svc-backstage mk aws.migrate.up"
+alias docker.down.backstage.aws="TARGET=svc-backstage mk aws.migrate.down"
 # --------------------------------------------------
 
 # ------------------#
@@ -219,6 +236,7 @@ alias docker.down.award.aws="gosvc && TARGET=svc-award mk aws.migrate.down"
 # ------------------#
 alias docker.reset.compliance.aws="gosvc && docker.down.compliance.aws && docker.up.compliance.aws"
 alias docker.up.compliance="gosvc && TARGET=svc-compliance AUTH_ENABLED=1 mk compose.up.build"
+alias docker.up.compliance.detached="gosvc && TARGET=svc-compliance AUTH_ENABLED=1 mk compose.up.build-detached"
 alias docker.up.compliance.aws="gosvc && TARGET=svc-compliance mk aws.migrate.up"
 alias docker.down.compliance="TARGET=svc-compliance docker-composer down"
 alias docker.down.compliance.aws="TARGET=svc-compliance mk aws.migrate.down"
@@ -257,6 +275,13 @@ alias docker.seed.dir.tenant="curl --location --request POST 'http://api.local.d
 alias docker.seed.dir.tenant.archer="curl --location --request POST 'http://api.local.dpty.io/sys/dir/v1/tenants' --header 'Content-Type: application/json' --data-raw '{\"data\": {\"id\": \"eb66a539-2aba-4935-a250-753fe5e9e6bf\",\"hostname\": \"business.dev.local.dpty.io\",\"countryId\": 13,\"countryCode\": \"AU\",\"dbHost\": \"testdb.deputec.com\",\"dbName\": \"deputec_b1234\",\"additionalHostname\": \"business.dev.local.dpty.io\",\"createdAt\": \"2019-11-28T03:57:20Z\",\"redisTenantCluster\": \"redis-tenant.local.deputec.com:17000\",\"creator\": \"rimba\",\"channel\": \"EMBED_XERO\",\"externalId\": \"local-dev-enviroment\",\"region\": \"apse2\",\"portfolioName\": \"Deputy Development\",\"edition\": 9}}'"
 # --------------------------------------------------
 
+# -----------------#
+# GO-SVC Directory #
+# -----------------#
+alias docker.up.dmm.aws.testing="gosvc && TARGET=svc-dmm mk aws.migrate.up ENVIRONMENT=testing"
+alias docker.down.dmm.aws.testing="gosvc && TARGET=svc-dmm mk aws.migrate.down ENVIRONMENT=testing"
+# --------------------------------------------------
+
 # -------------#
 # XERO EMBED   #
 # -------------#
@@ -274,6 +299,8 @@ alias docker.down.hello="gosvc && docker stop svc-hello_app_1"
 # ------------#
 alias docker.up.hire="gosvc && TARGET=svc-hire mk compose.up.build"
 alias docker.up.hire.aws="gosvc && TARGET=svc-hire mk aws.migrate.up"
+alias docker.up.hire.aws.testing="gosvc && TARGET=svc-hire mk aws.migrate.up ENVIRONMENT=testing"
+alias docker.down.hire.aws.testing="gosvc && TARGET=svc-hire mk aws.migrate.down ENVIRONMENT=testing"
 alias docker.down.hire.aws="gosvc && TARGET=svc-hire mk aws.migrate.down"
 alias docker.reset.hire.aws="docker.down.hire.aws && docker.up.hire.aws"
 # --------------------------------------------------
@@ -282,8 +309,11 @@ alias docker.reset.hire.aws="docker.down.hire.aws && docker.up.hire.aws"
 # GO-SVC HR #
 # ------------#
 alias docker.up.hr="gosvc && TARGET=svc-hr mk compose.up.build"
+alias docker.up.hr.detached="gosvc && TARGET=svc-hr mk compose.up.build-detached"
 alias docker.up.hr.aws="gosvc && TARGET=svc-hr mk aws.migrate.up"
+alias docker.up.hr.aws.testing="gosvc && TARGET=svc-hr mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.down.hr.aws="gosvc && TARGET=svc-hr mk aws.migrate.down"
+alias docker.down.hr.aws.testing="gosvc && TARGET=svc-hr mk aws.migrate.down ENVIRONMENT=testing"
 alias docker.reset.hr.aws="docker.down.hr.aws && docker.up.hr.aws"
 # --------------------------------------------------
 
@@ -305,7 +335,9 @@ alias docker.up.integrations.openapi="gosvc && TARGET=svc-integrations scripts/m
 # GO-SVC LEAVE #
 # -------------#
 alias docker.up.leave="gosvc && TARGET=svc-leave mk compose.up.build"
+alias docker.up.leave.auth="gosvc && TARGET=svc-leave AUTH_ENABLED=true mk compose.up.build"
 alias docker.up.leave.detached="gosvc && TARGET=svc-leave mk compose.up.build-detached"
+alias docker.up.leave.auth.detached="gosvc && TARGET=svc-leave AUTH_ENABLED=true mk compose.up.build-detached"
 alias docker.up.leave.aws="docker.aws.make && gosvc && TARGET=svc-leave mk aws.migrate.up"
 alias docker.down.leave.aws="docker.aws.make && gosvc && TARGET=svc-leave mk aws.migrate.down"
 alias docker.reset.leave.aws="docker.down.leave.aws && docker.up.leave.aws"
@@ -331,7 +363,9 @@ alias docker.up.marketplace.auth="gosvc && TARGET=svc-marketplace AUTH_ENABLED=1
 alias docker.up.marketplace.auth.detached="gosvc && TARGET=svc-marketplace AUTH_ENABLED=1 mk compose.up.build-detached"
 alias docker.down.marketplace="gosvc && TARGET=svc-marketplace docker-compose down"
 alias docker.up.marketplace.aws="docker.aws.make && gosvc && TARGET=svc-marketplace mk aws.migrate.up"
+alias docker.up.marketplace.aws.testing="docker.aws.make && gosvc && TARGET=svc-marketplace mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.down.marketplace.aws="gosvc && TARGET=svc-marketplace mk aws.migrate.down"
+alias docker.down.marketplace.aws.testing="gosvc && TARGET=svc-marketplace mk aws.migrate.down ENVIRONMENT=testing"
 alias docker.reset.marketplace.aws="docker.down.marketplace.aws && docker.up.marketplace.aws"
 alias docker.seed.marketplace="gosvc && TARGET=svc-marketplace && go run cmd/svc-marketplace/data/seeds/main.go"
 # --------------------------------------------------
@@ -340,10 +374,13 @@ alias docker.seed.marketplace="gosvc && TARGET=svc-marketplace && go run cmd/svc
 # GO-SVC METRICS #
 # ---------------#
 alias docker.reset.metrics.aws="gosvc && docker.down.metrics.aws && docker.up.metrics.aws"
-alias docker.reset.metrics.seed="gosvc && docker.down.metrics.aws && docker.up.metrics.aws && docker.up.metrics.seed"
+alias docker.reset.metrics.seed="gosvc && docker.down.metrics.aws && docker.up.metrics.aws && docker.seed.metrics"
 alias docker.up.metrics="gosvc && TARGET=svc-metrics mk compose.up.build"
+alias docker.up.metrics.detached="gosvc && TARGET=svc-metrics mk compose.up.build-detached"
 alias docker.up.metrics.lambda="opsmetrics && make lambda.build && make lambda.create"
 alias docker.up.metrics.aws="gosvc && TARGET=svc-metrics mk aws.migrate.up"
+alias docker.up.metrics.aws.testing="gosvc && TARGET=svc-metrics mk aws.migrate.up ENVIRONMENT=testing"
+alias docker.down.metrics.aws.testing="gosvc && TARGET=svc-metrics mk aws.migrate.down ENVIRONMENT=testing"
 alias docker.seed.metrics="docker.aws.make && gosvc && TARGET=svc-metrics mk aws.seed"
 alias docker.down.metrics="gosvc && TARGET=svc-metrics docker-compose down"
 alias docker.down.metrics.aws="gosvc && TARGET=svc-metrics mk aws.migrate.down"
@@ -355,6 +392,8 @@ alias docker.down.metrics.lambda="opsmetrics && make lambda.delete"
 # --------------------#
 alias docker.up.notification="gosvc && TARGET=svc-notification NOTIFICATION_SERVICE_MODE=dev mk compose.up.build-detached"
 alias docker.up.notification.aws="gosvc && TARGET=svc-notification mk aws.migrate.up"
+alias docker.up.notification.aws.testing="gosvc && TARGET=svc-notification mk aws.migrate.up ENVIRONMENT=testing"
+alias docker.down.notification.aws.testing="gosvc && TARGET=svc-notification mk aws.migrate.down ENVIRONMENT=testing"
 alias docker.down.notification.aws="gosvc && TARGET=svc-notification mk aws.migrate.down"
 alias docker.reset.notification.aws="docker.down.notification.aws && docker.up.notification.aws"
 # --------------------------------------------------
@@ -374,7 +413,9 @@ alias docker.login.cx="AWS_PROFILE=okta-cx-rw aws ecr get-login-password --regio
 # ---------------#
 alias docker.reset.payrate.aws="gosvc && docker.down.payrate.aws && docker.up.payrate.aws"
 alias docker.up.payrate="gosvc && TARGET=svc-payrate mk compose.up.build"
+alias docker.up.payrate.detached="gosvc && TARGET=svc-payrate mk compose.up.build-detached"
 alias docker.up.payrate.aws="gosvc && TARGET=svc-payrate mk aws.migrate.up"
+alias docker.up.payrate.aws.testing="gosvc && TARGET=svc-payrate mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.up.payrate.openapi="gosvc && TARGET=svc-payrate scripts/mk compose.up.build"
 alias docker.seed.payrate="gosvc && go run cmd/svc-payrate/dev/seed/main.go all"
 alias docker.seed.payrate.flsa="gosvc && go run cmd/svc-payrate/dev/seed/main.go flsa"
@@ -384,6 +425,21 @@ alias docker.seed.payrate.fwwseattle="gosvc && go run cmd/svc-payrate/dev/seed/m
 alias docker.seed.payrate.ctsf="gosvc && go run cmd/svc-payrate/dev/seed/main.go ctsf"
 alias docker.down.payrate="gosvc && TARGET=svc-payrate docker-composer down"
 alias docker.down.payrate.aws="gosvc && TARGET=svc-payrate mk aws.migrate.down"
+alias docker.down.payrate.aws.testing="gosvc && TARGET=svc-payrate mk aws.migrate.down ENVIRONMENT=testing"
+# --------------------------------------------------
+
+
+# ---------------#
+# GO-SVC PAYROLL #
+# ---------------#
+alias docker.reset.payroll.aws="gosvc && docker.down.payroll.aws && docker.up.payroll.aws"
+alias docker.up.payroll="gosvc && TARGET=svc-payroll mk compose.up.build"
+alias docker.up.payroll.detached="gosvc && TARGET=svc-payroll mk compose.up.build-detached"
+alias docker.up.payroll.auth="TARGET=svc-payroll mk compose.up.build AUTH_ENABLED=true"
+alias docker.up.payroll.auth.detached="gosvc && TARGET=svc-payroll mk compose.up.build-detached AUTH_ENABLED=true"
+alias docker.up.payroll.aws="gosvc && TARGET=svc-payroll mk aws.migrate.up"
+alias docker.down.payroll="gosvc && TARGET=svc-payroll docker-composer down"
+alias docker.down.payroll.aws="gosvc && TARGET=svc-payroll mk aws.migrate.down"
 # --------------------------------------------------
 
 
@@ -401,6 +457,7 @@ alias docker.up.timesheet.ngrok="$HOME/dev/src/github.com/deputyapp/go-svc/scrip
 # GO-SVC QUERY #
 # -------------#
 alias docker.up.query="gosvc && TARGET=svc-query mk compose.up.build"
+alias docker.up.query.aws.testing="docker.aws.make && gosvc && TARGET=svc-query mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.up.query.detached="gosvc && TARGET=svc-query mk compose.up.build-detached"
 alias docker.up.query.ngrok="ngrok http --domain=ram-calm-rapidly.ngrok-free.app 8888"
 # --------------------------------------------------
@@ -443,7 +500,8 @@ alias docker.up.testapp="svcscripts && INSTANCE=\"https://business.dev.local.dpt
 # -----------------#
 # GO-SVC URL #
 # -----------------#
-alias docker.up.url="gosvc && TARGET=svc-url AUTH_ENABLED=1 mk compose.up.build-detached"
+alias docker.up.url="gosvc && TARGET=svc-url AUTH_ENABLED=1 mk compose.up.build"
+alias docker.up.url.detached="gosvc && TARGET=svc-url AUTH_ENABLED=1 mk compose.up.build-detached"
 alias docker.down.url="gosvc && docker stop svc-url_app_1"
 alias docker.up.url.aws="gosvc && TARGET=svc-url mk mysql.migrate"
 alias docker.down.url.aws="gosvc && TARGET=svc-url mk aws.migrate.down"
@@ -473,7 +531,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH="/opt/homebrew/opt/php@7.3/bin:/opt/homebrew/opt/php@7.3/sbin:/usr/local/opt/mysql@5.7/bin:/usr/local/sbin:$PATH"
+export PATH="/opt/homebrew/opt/php@7.4/bin:/opt/homebrew/opt/php@7.4/sbin:/usr/local/opt/mysql@5.7/bin:/usr/local/sbin:$PATH"
 export PATH="$(brew --prefix php)/bin:$PATH"
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
