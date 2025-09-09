@@ -22,6 +22,7 @@ alias payroll="cd $HOME/dev/src/github.com/deputyapp/deputy-payroll-export-scrip
 alias portal="cd $HOME/dev/src/github.com/deputyapp/portal"
 alias devbox="cd $HOME/dev/src/github.com/deputyapp/devbox"
 alias webapp="cd $HOME/dev/src/github.com/deputyapp/deputy-webapp"
+alias fenomono="cd $HOME/dev/src/github.com/deputyapp/fe-monorepo"
 alias websignup="cd $HOME/dev/src/github.com/deputyapp/web-signup"
 alias gosvc="cd $HOME/dev/src/github.com/deputyapp/go-svc"
 alias femonorepo="cd $HOME/dev/src/github.com/deputyapp/fe-monorepo"
@@ -70,12 +71,14 @@ alias mergetool="/Applications/DiffMerge.app/Contents/MacOS/DiffMerge"
 alias selenium="cd ~/Selenium && java -jar selenium-server-standalone-2.53.1.jar"
 alias phpunit="vendor/bin/phpunit"
 alias docker.test.e2e.premium="e2etests && make test PROJECT=csvBulk"
-alias docker.test.e2e.premium.debug="e2etests && make debug PROJECT=csvBulk"
+alias docker.test.e2e.bamboohr="e2etests && make debug PROJECT=bambooHR"
+alias docker.test.e2e.bamboohr.debug="e2etests && make debug PROJECT=bambooHR"
 alias docker.test.e2e.enterprise="e2etests && nvm use v14.21.2 && make test PROJECT=csvBulkEnterprise"
 alias docker.test.e2e.enterprise.debug="e2etests && nvm use v14.21.2 && make debug PROJECT=csvBulkEnterprise"
 alias docker.test.e2e.report="npx playwright show-report"
 alias docker.test.award="gosvc && TARGET=svc-award mk test.target"
 alias docker.test.dmm="gosvc && TARGET=svc-dmm mk test.target"
+alias docker.test.payroll="gosvc && TARGET=svc-payroll mk test.target"
 alias docker.test.integrations="gosvc && mk test.target TARGET=svc-integrations"
 alias docker.test.integrations.e2e="gosvc && mk e2e-tests TARGET=svc-integrations"
 alias docker.test.award="gosvc && TARGET=svc-award mk test.target"
@@ -272,6 +275,7 @@ alias docker.up.dir.aws="docker.aws.make && gosvc && TARGET=svc-dir mk aws.migra
 alias docker.down.dir.aws="gosvc && TARGET=svc-dir mk aws.migrate.down"
 alias docker.reset.dir.aws="docker.down.dir.aws && docker.up.dir.aws"
 alias docker.seed.dir.tenant="curl --location --request POST 'http://api.local.dpty.io/sys/dir/v1/tenants' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhcGkuZGVwdXR5LmNvbS9zeXMvZGlyL3YxIiwiZHAuYmlkIjoiZWI2NmE1MzktMmFiYS00OTM1LWEyNTAtNzUzZmU1ZTllNmJmIiwiZHAudWlkIjoiZWYxNzJkYTUtYTU0Ni00M2Q4LThlYjQtNTgwYTgyMTAzOWU5IiwiZXhwIjoxNjMxMjI4Mzc5LCJpYXQiOjE2MzExNDE5NzksImlzcyI6ImRlcHV0eS5jb20iLCJqdGkiOiIxeHNSbnNPRTRPTW5RSFREN0FpUHJDV3RLVDUiLCJuYmYiOjE2MzExNDE5NzksInN1YiI6ImRlcHV0eS5jb20ifQ.ordh9SPuLy2_h7ggw8ujBUZHldrWEusah4lxcTnFLdQ' --header 'Content-Type: application/json' --data-raw '{\"data\": {    \"id\":\"eb66a539-2aba-4935-a250-753fe5e9e6bf\",\"hostname\":\"business.dev.local.dpty.io\",\"additionalHostname\":\"business.dev.local.dpty.io\",\"portfolioName\":\"Deputy Development 1\",\"countryCode\":\"AU\",\"countryId\": 13,\"region\":\"usw2\",\"creator\":\"-2\",\"status\":\"ACTIVE\",\"edition\":11,\"enabled\":true,\"channel\":\"DIRECT\",\"billingSuppressed\":false,\"trialEndedAt\":null,\"conversionDate\": null,\"dbHost\":\"svc.db.local.dpty.io\",\"dbName\":\"deputec_dev\",\"dbUser\":\"\",\"redisTenantCluster\":\"redis-tenant.local.deputec.com:17000\",\"elasticsearchHost\":\"\",\"subscriptionMetadata\": {},\"createdAt\":\"2019-05-22T15:34:47Z\",\"modifiedAt\":\"2023-06-05T12:29:37Z\",\"externalId\":\"\"}}'"
+alias docker.seed.dir.tenant.us="curl --location --request POST 'http://api.local.dpty.io/sys/dir/v1/tenants' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhcGkuZGVwdXR5LmNvbS9zeXMvZGlyL3YxIiwiZHAuYmlkIjoiZWI2NmE1MzktMmFiYS00OTM1LWEyNTAtNzUzZmU1ZTllNmJmIiwiZHAudWlkIjoiZWYxNzJkYTUtYTU0Ni00M2Q4LThlYjQtNTgwYTgyMTAzOWU5IiwiZXhwIjoxNjMxMjI4Mzc5LCJpYXQiOjE2MzExNDE5NzksImlzcyI6ImRlcHV0eS5jb20iLCJqdGkiOiIxeHNSbnNPRTRPTW5RSFREN0FpUHJDV3RLVDUiLCJuYmYiOjE2MzExNDE5NzksInN1YiI6ImRlcHV0eS5jb20ifQ.ordh9SPuLy2_h7ggw8ujBUZHldrWEusah4lxcTnFLdQ' --header 'Content-Type: application/json' --data-raw '{\"data\": {    \"id\":\"af4d2bb2-1d28-11ed-861d-0242ac120002\",\"hostname\":\"usbusiness.dev.local.dpty.io\",\"additionalHostname\":\"usbusiness.dev.local.dpty.io\",\"portfolioName\":\"Deputy Development US 1\",\"countryCode\":\"US\",\"countryId\": 223,\"region\":\"usw2\",\"creator\":\"-2\",\"status\":\"ACTIVE\",\"edition\":11,\"enabled\":true,\"channel\":\"DIRECT\",\"billingSuppressed\":false,\"trialEndedAt\":null,\"conversionDate\": null,\"dbHost\":\"svc.db.local.dpty.io\",\"dbName\":\"deputec_e2e_us\",\"dbUser\":\"\",\"redisTenantCluster\":\"redis-tenant.local.deputec.com:17000\",\"elasticsearchHost\":\"\",\"subscriptionMetadata\": {},\"createdAt\":\"2019-05-22T15:34:47Z\",\"modifiedAt\":\"2023-06-05T12:29:37Z\",\"externalId\":\"\"}}'"
 alias docker.seed.dir.tenant.archer="curl --location --request POST 'http://api.local.dpty.io/sys/dir/v1/tenants' --header 'Content-Type: application/json' --data-raw '{\"data\": {\"id\": \"eb66a539-2aba-4935-a250-753fe5e9e6bf\",\"hostname\": \"business.dev.local.dpty.io\",\"countryId\": 13,\"countryCode\": \"AU\",\"dbHost\": \"testdb.deputec.com\",\"dbName\": \"deputec_b1234\",\"additionalHostname\": \"business.dev.local.dpty.io\",\"createdAt\": \"2019-11-28T03:57:20Z\",\"redisTenantCluster\": \"redis-tenant.local.deputec.com:17000\",\"creator\": \"rimba\",\"channel\": \"EMBED_XERO\",\"externalId\": \"local-dev-enviroment\",\"region\": \"apse2\",\"portfolioName\": \"Deputy Development\",\"edition\": 9}}'"
 # --------------------------------------------------
 
@@ -405,6 +409,7 @@ alias docker.sso='AWS_PROFILE=okta-sso aws sso login'
 alias docker.login.integrations="AWS_PROFILE=okta-prod-integration aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
 alias docker.login="AWS_PROFILE=okta-mgt-basic aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
 alias docker.login.apse1="AWS_PROFILE=okta-mgt-basic aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.ap-southeast-1.amazonaws.com"
+alias docker.login.apse2="AWS_PROFILE=okta-mgt-basic aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.ap-southeast-2.amazonaws.com"
 alias docker.login.cx="AWS_PROFILE=okta-cx-rw aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 358559522285.dkr.ecr.us-west-2.amazonaws.com"
 # --------------------------------------------------
 
@@ -433,13 +438,16 @@ alias docker.down.payrate.aws.testing="gosvc && TARGET=svc-payrate mk aws.migrat
 # GO-SVC PAYROLL #
 # ---------------#
 alias docker.reset.payroll.aws="gosvc && docker.down.payroll.aws && docker.up.payroll.aws"
+alias docker.reset.payroll.aws.testing="gosvc && docker.down.payroll.aws.testing && docker.up.payroll.aws.testing"
 alias docker.up.payroll="gosvc && TARGET=svc-payroll mk compose.up.build"
 alias docker.up.payroll.detached="gosvc && TARGET=svc-payroll mk compose.up.build-detached"
 alias docker.up.payroll.auth="TARGET=svc-payroll mk compose.up.build AUTH_ENABLED=true"
 alias docker.up.payroll.auth.detached="gosvc && TARGET=svc-payroll mk compose.up.build-detached AUTH_ENABLED=true"
 alias docker.up.payroll.aws="gosvc && TARGET=svc-payroll mk aws.migrate.up"
+alias docker.up.payroll.aws.testing="docker.aws.make && gosvc && TARGET=svc-payroll mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.down.payroll="gosvc && TARGET=svc-payroll docker-composer down"
 alias docker.down.payroll.aws="gosvc && TARGET=svc-payroll mk aws.migrate.down"
+alias docker.down.payroll.aws.testing="gosvc && TARGET=svc-payroll mk aws.migrate.down ENVIRONMENT=testing"
 # --------------------------------------------------
 
 
@@ -521,6 +529,7 @@ alias docker.update.webapp.frontend="webapp && make fe.install"
 alias docker.seed.webapp="webapp && make seed"
 alias docker.seed.webapp.trial="webapp && make seed.trial"
 alias docker.seed.webapp.enterprise="webapp && make seed.enterprise"
+alias docker.seed.webapp.payroll.us="webapp && make seed.install.payroll-us"
 alias docker.bash.test="webapp && docker-compose -f docker-compose.yml exec deputy bin/composer.phar test:database"
 alias docker.bash.webapp="webapp && docker-compose -f docker-compose.yml exec deputy bash"
 alias docker.bash.devbox="webapp && docker-compose -f docker-compose.yml exec deputy bash"
