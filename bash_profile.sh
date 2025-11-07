@@ -112,7 +112,7 @@ alias commitm="git commit -m"
 alias gau="git add $(git ls-files -o —exclude-standard)"
 alias nah="git reset --hard;git clean -df;"
 alias git.pull="devbox && pwd && git checkout main && git pull --all && webapp && pwd && git checkout main && git pull --all && servicesproxy && pwd && git checkout main && git pull --all && gosvc && pwd && git checkout main && git pull --all && pwd && git checkout main && git pull --all && payroll && pwd && git checkout main && git pull --all"
-alias pushupstream="git push --set-upstream origin"
+alias pushupstream="git push --set-upstream origin $(git branch --show-current)"
 alias git.merge.main="git checkout main && git pull --all && git checkout - && git merge main"
 alias git.fetch.pull="git fetch && git pull --all"
 alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify --no-gpg-sign --message "--wip-- [skip ci]"'
@@ -179,7 +179,7 @@ alias docker.stop="docker stop \$(docker ps --format '{{.Names}}' -a -q)"
 alias docker.network="docker network create deputy"
 alias docker.pull="webapp && make pull"
 alias docker.info="docker system df"
-alias docker.nuke="docker system prune -a -f --volumes"
+alias docker.nuke="docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker system prune -a -f --volumes"
 alias docker.info.containers="docker ps --format '{{.ID}} {{.Names}}'"
 alias docker.prune.images="docker image prune --filter 'until=24h'"
 alias docker.prune.volumes="docker system prune -a --volumes"
@@ -192,6 +192,10 @@ alias docker.down="docker.down.devbox && docker.down.dir && docker.down.webapp &
 # --------#
 # GO-SVC  #
 # --------#
+alias docker.up.dynamodb="gosvc && docker.up.dir.aws && docker.up.integrations.aws && docker.up.marketplace.aws && docker.up.payroll.aws"
+alias docker.down.dynamodb="gosvc && docker.down.dir.aws && docker.down.integrations.aws && docker.down.marketplace.aws && docker.down.payroll.aws"
+alias docker.reset.dynamodb="gosvc && docker.reset.dir.aws && docker.reset.integrations.aws && docker.reset.marketplace.aws && docker.reset.payroll.aws"
+
 alias docker.down.svc="gosvc && docker.down.integrations && docker.down.dir && docker.down.marketplace"
 alias docker.jwt.dir="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_DIR_V1 --payload_user_id ef172da5-a546-43d8-8eb4-580a821039e9 --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf -d 24h"
 alias docker.jwt.query="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_QUERY_V1 --oidc --svc-connect-endpoint https://api.usw2.test.dpty.io --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf --payload_business_user_id ef172da5-a546-43d8-8eb4-580a821039e9 -d 72h"
@@ -201,6 +205,11 @@ alias docker.jwt.award="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY
 alias docker.jwt.webapp="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --aud DEPUTY --sub ONCE --duration 24h"
 alias docker.jwt.payroll="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --aud SVC_PAYROLL_V1 --payload_business_user_id '8973d035-ac37-4254-9596-7f797a884754' --payload_business_id 'c32085d7-3f17-4aa3-bd8d-f3e2b8660bc7' --payload_business_location_id '1' --duration 24h"
 alias docker.jwt.test="gosvc && SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_QUERY_V1 --oidc --svc-connect-endpoint https://api.usw2.test.dpty.io --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf --payload_business_user_id ef172da5-a546-43d8-8eb4-580a821039e9 -d 10072h"
+alias docker.jwt.timesheet="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --aud SVC_TIMESHEET_V1 --sub DEPUTY --duration 24h --payload_business_user_id 1 --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf"
+
+alias docker.jwt.timesheet.us="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --aud SVC_TIMESHEET_V1 --sub DEPUTY --payload_business_user_id 1 --payload_business_id af4d2bb2-1d28-11ed-861d-0242ac120002 --duration 72h"
+alias docker.jwt.query.us="SECRETS_JWT_KEY=magic ./bin/genjwt --iss DEPUTY --sub DEPUTY --aud SVC_QUERY_V1 --oidc --svc-connect-endpoint https://api.usw2.test.dpty.io --payload_business_id eb66a539-2aba-4935-a250-753fe5e9e6bf --payload_business_user_id af4d2bb2-1d28-11ed-861d-0242ac120002 -d 72h"
+
 # --------------------------------------------------
 
 # -------------#
@@ -445,6 +454,7 @@ alias docker.up.payroll.auth="TARGET=svc-payroll mk compose.up.build AUTH_ENABLE
 alias docker.up.payroll.auth.detached="gosvc && TARGET=svc-payroll mk compose.up.build-detached AUTH_ENABLED=true"
 alias docker.up.payroll.aws="gosvc && TARGET=svc-payroll mk aws.migrate.up"
 alias docker.up.payroll.aws.testing="docker.aws.make && gosvc && TARGET=svc-payroll mk aws.migrate.up ENVIRONMENT=testing"
+alias docker.seed.payroll="gosvc && TARGET=svc-payroll mk aws.seed"
 alias docker.down.payroll="gosvc && TARGET=svc-payroll docker-composer down"
 alias docker.down.payroll.aws="gosvc && TARGET=svc-payroll mk aws.migrate.down"
 alias docker.down.payroll.aws.testing="gosvc && TARGET=svc-payroll mk aws.migrate.down ENVIRONMENT=testing"
@@ -456,10 +466,11 @@ alias docker.down.payroll.aws.testing="gosvc && TARGET=svc-payroll mk aws.migrat
 # -----------------#
 alias docker.reset.timesheet.aws="gosvc && docker.down.timesheet.aws && docker.up.timesheet.aws"
 alias docker.up.timesheet="TARGET=svc-timesheet mk compose.up.build"
+alias docker.up.timesheet.detached="TARGET=svc-timesheet mk compose.up.build-detached"
 alias docker.up.timesheet.aws="gosvc && TARGET=svc-timesheet mk aws.migrate.up"
 alias docker.down.timesheet="gosvc && TARGET=svc-timesheet docker-composer down"
 alias docker.down.timesheet.aws="gosvc && TARGET=svc-timesheet mk aws.migrate.up"
-alias docker.up.timesheet.ngrok="$HOME/dev/src/github.com/deputyapp/go-svc/scripts/run_ngrok"
+alias docker.up.timesheet.ngrok="GRAPHQL_PROXY_HOSTNAME_OVERRIDE=ram-calm-rapidly.ngrok-free.app $HOME/dev/src/github.com/deputyapp/go-svc/scripts/run_ngrok"
 
 # -------------#
 # GO-SVC QUERY #
@@ -467,7 +478,9 @@ alias docker.up.timesheet.ngrok="$HOME/dev/src/github.com/deputyapp/go-svc/scrip
 alias docker.up.query="gosvc && TARGET=svc-query mk compose.up.build"
 alias docker.up.query.aws.testing="docker.aws.make && gosvc && TARGET=svc-query mk aws.migrate.up ENVIRONMENT=testing"
 alias docker.up.query.detached="gosvc && TARGET=svc-query mk compose.up.build-detached"
-alias docker.up.query.ngrok="ngrok http --domain=ram-calm-rapidly.ngrok-free.app 8888"
+alias docker.up.query.ngrok="NGROK_AUTHTOKEN=33onixaBvkEt6vRg1w1lLu5aMv4_5J8i9AXXhrhss34vYHSLo ngrok http --domain=ram-calm-rapidly.ngrok-free.app 8888"
+alias docker.up.query.ngrok.log="NGROK_AUTHTOKEN=33onixaBvkEt6vRg1w1lLu5aMv4_5J8i9AXXhrhss34vYHSLo ngrok http --domain=ram-calm-rapidly.ngrok-free.app 8888 --log=stdout"
+alias docker.up.query.ngrok.login="docker run -it -e NGROK_AUTHTOKEN=33onixaBvkEt6vRg1w1lLu5aMv4_5J8i9AXXhrhss34vYHSLo ngrok/ngrok http --domain=ram-calm-rapidly.ngrok-free.app 8888"
 # --------------------------------------------------
 
 # ---------------#
@@ -529,7 +542,7 @@ alias docker.update.webapp.frontend="webapp && make fe.install"
 alias docker.seed.webapp="webapp && make seed"
 alias docker.seed.webapp.trial="webapp && make seed.trial"
 alias docker.seed.webapp.enterprise="webapp && make seed.enterprise"
-alias docker.seed.webapp.payroll.us="webapp && make seed.install.payroll-us"
+alias docker.seed.webapp.payroll.us="webapp && make seed.install.e2e-us"
 alias docker.bash.test="webapp && docker-compose -f docker-compose.yml exec deputy bin/composer.phar test:database"
 alias docker.bash.webapp="webapp && docker-compose -f docker-compose.yml exec deputy bash"
 alias docker.bash.devbox="webapp && docker-compose -f docker-compose.yml exec deputy bash"
@@ -547,3 +560,4 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 eval "$(pyenv init --path)"
 export PATH="/opt/homebrew/opt/icu4c/bin:$PATH"
 export PATH="/opt/homebrew/opt/icu4c/sbin:$PATH"
+export PATH="$(go env GOPATH)/bin:$PATH"
